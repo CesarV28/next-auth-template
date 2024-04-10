@@ -1,5 +1,5 @@
-import { Navbar } from "@/components/auth/navbar";
-import { ThemeToggle } from "@/components/theme-toggle";
+
+import { Navbar } from "@/components/navbar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

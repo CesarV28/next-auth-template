@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { db } from "@/lib//db";
 import { getUserById } from "@/db/user.db";
+import { deleteTwoFactorConfirmationById, getTwoFactorConfirmationByUserId } from "@/db/two-factor-confirmation";
 
 
 
@@ -37,6 +38,13 @@ export const {
                 return false;
             }
 
+            if( existingUser.isTwoFactorEnabled ) {
+                const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
+                if(!twoFactorConfirmation) return false;
+                
+                await deleteTwoFactorConfirmationById(twoFactorConfirmation.id);
+            }
+
             return true;
         },
         async session({ token, session }) {
@@ -45,8 +53,12 @@ export const {
                 session.user.id = token.sub;
             }
 
-            if (token.role && session.user) {
+            if (token.roles && session.user) {
                 session.user.roles = token.roles;
+            }
+
+            if (session.user) {
+                session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
             }
 
             return session
@@ -59,6 +71,7 @@ export const {
             if (!existingUser) return token;
             
             token.roles = existingUser.roles;
+            token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
 
             return token;
         }

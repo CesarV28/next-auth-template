@@ -1,5 +1,7 @@
+
 import Link from "next/link";
-import { ThemeToggle } from "../theme-toggle";
+import { ThemeToggle } from "./theme-toggle";
+
 
 
 export const Navbar = () => {
@@ -14,11 +16,6 @@ export const Navbar = () => {
                         Home
                     </Link>
 
-                </li>
-                <li>
-                    <Link className="" href={'/settings'}>
-                        Settings
-                    </Link>
                 </li>
             </ul>
 

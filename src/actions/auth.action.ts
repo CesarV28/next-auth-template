@@ -7,18 +7,20 @@ import { db } from '@/lib/db'
 
 import bcrypt from 'bcrypt'
 import { getUserByEmail } from '@/db/user.db';
-import { signIn } from '@/lib/auth';
+import { signIn, signOut } from '@/lib/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
-import {  generateVerificationToken } from '@/lib/tokens';
-import { sendVerificationToken } from '@/lib/mail';
+import { generateVerificationToken, generateTwoFactorToken } from '@/lib/tokens';
+import { sendVerificationTokenEmail, sendTwoFactorTokenEmail } from '@/lib/mail';
+import { deleteTwoFactorTokenTokenById, getTwoFactorTokenByEmail } from '@/db/two-factor-token';
+import { createTwoFactorConfirmation, deleteTwoFactorConfirmationById, getTwoFactorConfirmationByUserId } from '@/db/two-factor-confirmation';
 
-interface Login {
-    status: "error" | "success",
+interface AuthResponse {
+    status: "error" | "success" | "two-factor",
     message: string;
 }
 
-export const login = async (values: z.infer<typeof LoginSchema>): Promise<Login> => {
+export const login = async (values: z.infer<typeof LoginSchema>): Promise<AuthResponse> => {
     const validatedFields = LoginSchema.safeParse(values)
 
     if (!validatedFields.success) {
@@ -28,7 +30,7 @@ export const login = async (values: z.infer<typeof LoginSchema>): Promise<Login>
         }
     }
 
-    const { email, password } = validatedFields.data;
+    const { email, password, code } = validatedFields.data;
 
     const existingUser = await getUserByEmail(email);
 
@@ -43,7 +45,7 @@ export const login = async (values: z.infer<typeof LoginSchema>): Promise<Login>
 
         const verificationToken = await generateVerificationToken(existingUser.email);
 
-        await sendVerificationToken(
+        await sendVerificationTokenEmail(
             verificationToken?.email || '',
             verificationToken?.token || ''
         );
@@ -51,6 +53,57 @@ export const login = async (values: z.infer<typeof LoginSchema>): Promise<Login>
         return {
             status: "success",
             message: "Confirmation email sent!"
+        }
+    }
+
+    if (existingUser.isTwoFactorEnabled && existingUser.email) {
+        if (code) {
+            const twoFactorToken = await getTwoFactorTokenByEmail(existingUser.email);
+
+            if (!twoFactorToken) {
+                return {
+                    status: "error",
+                    message: "Invalid code!"
+                }
+            }
+            if (twoFactorToken.token !== code) {
+                return {
+                    status: "error",
+                    message: "Invalid code!"
+                }
+            }
+
+            const hasExpired = new Date(twoFactorToken.expires) < new Date();
+
+            if (hasExpired) {
+                return {
+                    status: "error",
+                    message: "Code expired!"
+                }
+            }
+
+            await deleteTwoFactorTokenTokenById(twoFactorToken.id);
+            const existingTwoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
+
+            if (existingTwoFactorConfirmation) {
+                await deleteTwoFactorConfirmationById(existingTwoFactorConfirmation.id);
+            }
+
+            await createTwoFactorConfirmation({
+                userId: existingUser.id
+            });
+
+        } else {
+            const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+            await sendTwoFactorTokenEmail(
+                twoFactorToken?.email || '',
+                twoFactorToken?.token || ''
+            )
+
+            return {
+                status: "two-factor",
+                message: "Code verification sended"
+            }
         }
     }
 
@@ -65,6 +118,7 @@ export const login = async (values: z.infer<typeof LoginSchema>): Promise<Login>
             message: "Access correct"
         }
     } catch (error) {
+        console.log(error)
         if (error instanceof AuthError) {
             switch (error.type) {
                 case "CredentialsSignin":
@@ -83,7 +137,7 @@ export const login = async (values: z.infer<typeof LoginSchema>): Promise<Login>
     }
 }
 
-export const register = async (values: z.infer<typeof RegisterSchema>): Promise<Login> => {
+export const register = async (values: z.infer<typeof RegisterSchema>): Promise<AuthResponse> => {
     const validatedFields = RegisterSchema.safeParse(values);
 
     if (!validatedFields.success) {
@@ -123,7 +177,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>): Promise<
 
     const verificationToken = await generateVerificationToken(user.email || '');
 
-    await sendVerificationToken(
+    await sendVerificationTokenEmail(
         verificationToken?.email || '',
         verificationToken?.token || ''
     );
@@ -134,4 +188,20 @@ export const register = async (values: z.infer<typeof RegisterSchema>): Promise<
     }
 }
 
+
+export const logout = async (): Promise<AuthResponse> => {
+    try {
+        await signOut()
+        
+        return {
+            status: "success",
+            message: "Logout successfully!"
+        }
+    } catch (error) {
+        return {
+            status: "error",
+            message: "Unexpected error ocurred"
+        }
+    }
+}
 

@@ -12,9 +12,12 @@ interface ProvidersProps {
 }
 
 export const Providers: FC<ProvidersProps> = ({ children }: ThemeProviderProps) => {
+
   return (
+  
       <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+        {children}
       </NextThemesProvider>
+ 
   )
 }

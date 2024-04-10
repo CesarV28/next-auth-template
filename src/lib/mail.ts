@@ -3,7 +3,24 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 
-export const sendPasswordResetToken = async (email: string, token: string) => {
+export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
+    try {
+
+        await resend.emails.send({
+            from: 'Email by Auth NextJs Template <onboarding@resend.dev>',
+            to: [email],
+            subject: 'Next Auth Template 2FA Code',
+            html: `<p>Your 2FA code <strong>${token}</strong></p>`,
+            text: 'it works!',
+        });
+   
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export const sendPasswordResetTokenEmail = async (email: string, token: string) => {
     try {
         const resetLink = `http://localhost:3000/auth/new-password?token=${token}`;
 
@@ -21,7 +38,7 @@ export const sendPasswordResetToken = async (email: string, token: string) => {
 }
 
 
-export const sendVerificationToken = async (email: string, token: string) => {
+export const sendVerificationTokenEmail = async (email: string, token: string) => {
     try {
         const confirmLink = `http://localhost:3000/auth/new-verification?token=${token}`;
 
