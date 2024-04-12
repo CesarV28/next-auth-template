@@ -14,9 +14,11 @@ import { generateVerificationToken, generateTwoFactorToken } from '@/lib/tokens'
 import { sendVerificationTokenEmail, sendTwoFactorTokenEmail } from '@/lib/mail';
 import { deleteTwoFactorTokenTokenById, getTwoFactorTokenByEmail } from '@/db/two-factor-token';
 import { createTwoFactorConfirmation, deleteTwoFactorConfirmationById, getTwoFactorConfirmationByUserId } from '@/db/two-factor-confirmation';
+import { currentServerUserRoles } from '@/lib/auth-session';
+import { UserRole } from '@prisma/client';
 
 interface AuthResponse {
-    status: "error" | "success" | "two-factor",
+    status: "error" | "success" | "two-factor" | "forbidden",
     message: string;
 }
 
@@ -192,7 +194,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>): Promise<
 export const logout = async (): Promise<AuthResponse> => {
     try {
         await signOut()
-        
+
         return {
             status: "success",
             message: "Logout successfully!"
@@ -201,6 +203,30 @@ export const logout = async (): Promise<AuthResponse> => {
         return {
             status: "error",
             message: "Unexpected error ocurred"
+        }
+    }
+}
+
+export const isUserAdmin = async (): Promise<AuthResponse> => {
+    try {
+
+        const role = await currentServerUserRoles();
+
+        if (!role || role !== UserRole.ADMIN) {
+            return {
+                status: "forbidden",
+                message: "Logout successfully!"
+            }
+        }
+
+        return {
+            status: "success",
+            message: "You have access"
+        }
+    } catch (error) {
+        return {
+            status: "error",
+            message: "Logout successfully!"
         }
     }
 }
