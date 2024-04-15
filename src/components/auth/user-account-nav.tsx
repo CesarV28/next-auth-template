@@ -13,11 +13,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from '@/components/auth/user-avatar';
-
-import { User } from '@prisma/client';
+import { SessionUser } from '@/types';
 
 interface UserAccountNavProps {
-    user: User;
+    user: SessionUser;
 }
 
 const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
@@ -33,16 +32,16 @@ const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
                 <UserAvatar
                     className="w-10 h-10"
                     user={{
-                        name: user.name || null,
-                        image: user.image || null,
+                        name: user?.name || null,
+                        image: user?.image || null,
                     }}
                 />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-2  leading-none">
-                        {user.name && <p className="font-medium">{user.name}</p>}
-                        {user.email && (
+                        {user?.name && <p className="font-medium">{user.name}</p>}
+                        {user?.email && (
                             <p className="w-[200px] truncate text-sm">
                                 {user.email}
                             </p>

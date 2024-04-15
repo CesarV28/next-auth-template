@@ -4,6 +4,7 @@ import authConfig from "@/auth.config";
 import { db } from "@/lib//db";
 import { getUserById } from "@/db/user.db";
 import { deleteTwoFactorConfirmationById, getTwoFactorConfirmationByUserId } from "@/db/two-factor-confirmation";
+import { getAccountByUserId } from "@/db/account";
 
 
 
@@ -23,7 +24,7 @@ export const {
                 where: { id: user.id },
                 data: { emailVerified: new Date() }
             });
-        }
+        },
     },
     callbacks: {
         async signIn({ user, account }) {
@@ -58,7 +59,10 @@ export const {
             }
 
             if (session.user) {
+                session.user.name = token.name;
+                session.user.email = token.email;
                 session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
+                session.user.isOAuth = token.isOAuth;
             }
 
             return session
@@ -69,7 +73,12 @@ export const {
             const existingUser = await getUserById(token.sub);
 
             if (!existingUser) return token;
+
+            const existingAccount = await getAccountByUserId(existingUser.id);
             
+            token.isOAuth = !!existingAccount;
+            token.name = existingUser.name;
+            token.email = existingUser.email;
             token.roles = existingUser.roles;
             token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
 

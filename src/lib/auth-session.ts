@@ -4,7 +4,8 @@ import { DefaultSession, User } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
     roles: UserRole
-    isTwoFactorEnabled: boolean
+    isTwoFactorEnabled: boolean,
+    isOAuth: boolean;
 }
 
 export const currentServerUser = async (): Promise<ExtendedUser | undefined> => {

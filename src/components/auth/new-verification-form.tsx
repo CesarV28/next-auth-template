@@ -12,12 +12,14 @@ interface NewVerificationFormProps {
 const NewVerificationForm: FC<NewVerificationFormProps> = () => {
 
     const searchParams = useSearchParams();
+    const token = searchParams.get('token');
+    
     const [verificationStatus, setVerificationStatus] = useState({
         status: "pending",
         message: "Your account is being verified"
     });
 
-    const token = searchParams.get('token');
+    
 
     const handleSubmit = useCallback(() => {
         if( 

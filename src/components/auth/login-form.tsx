@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, useState, useTransition } from "react"
+import { FC, Suspense, useState, useTransition } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -15,6 +15,12 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot,
+} from "@/components/ui/input-otp"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { LoaderIcon } from "lucide-react"
@@ -64,7 +70,7 @@ export const LoginForm: FC<LoginFormProps> = () => {
             }).catch(() => {
                 console.log("Catch")
                 form.setError("email", { message: "Something went wrong" }),
-                form.setError("password", { message: "Something went wrong" })
+                    form.setError("password", { message: "Something went wrong" })
             })
         })
 
@@ -81,20 +87,38 @@ export const LoginForm: FC<LoginFormProps> = () => {
                         name="code"
                         render={({ field }) => (
                             <FormItem>
-                                <Label htmlFor="code">
-                                    Two Factor Code
-                                </Label>
-                                <FormControl>
+                                <div className="flex flex-col gap-4 justify-center items-center">
+                                    <Label htmlFor="code" className="text-center">
+                                        Two Factor Code
+                                    </Label>
+                                    <FormControl>
 
-                                    <Input
-                                        {...field}
-                                        id="code"
-                                        placeholder="123456"
-                                        autoCapitalize="none"
-                                        autoCorrect="off"
-                                        disabled={isPending}
-                                    />
-                                </FormControl>
+                                        {/* <Input
+                                            {...field}
+                                            id="code"
+                                            placeholder="123456"
+                                            autoCapitalize="none"
+                                            autoCorrect="off"
+                                            disabled={isPending}
+                                        /> */}
+                                        <InputOTP maxLength={6} {...field}>
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={0} />
+                                                <InputOTPSlot index={1} />
+                                            </InputOTPGroup>
+                                            <InputOTPSeparator />
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={2} />
+                                                <InputOTPSlot index={3} />
+                                            </InputOTPGroup>
+                                            <InputOTPSeparator />
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={4} />
+                                                <InputOTPSlot index={5} />
+                                            </InputOTPGroup>
+                                        </InputOTP>
+                                    </FormControl>
+                                </div>
                                 <Button
                                     size="sm"
                                     variant="link"

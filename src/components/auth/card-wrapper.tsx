@@ -1,4 +1,5 @@
-import { FC } from "react";
+"use client"
+import { FC, Suspense } from "react";
 
 import {
     Card,
@@ -38,7 +39,9 @@ export const CardWrapper: FC<CardWrapperProps> = ({
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                {children}
+                <Suspense>
+                    {children}
+                </Suspense>
             </CardContent>
             {showSocial && (
                 <CardFooter>
@@ -51,8 +54,6 @@ export const CardWrapper: FC<CardWrapperProps> = ({
                     label={backButtonLabel}
                 />
             </CardFooter>
-
-
         </Card>
 
     );

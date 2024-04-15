@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/auth";
 import { SessionNavbar } from "@/components/auth/session-navbar";
-
+import { Toaster as SoonnerToaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -17,6 +17,7 @@ export default async function ProtectedLayout({
     const session = await auth();
     return (
         <SessionProvider session={session}>
+             <SoonnerToaster/>
             <SessionNavbar/>
             <div >
                 {children}
