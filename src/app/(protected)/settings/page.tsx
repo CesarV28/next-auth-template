@@ -56,11 +56,11 @@ export default function SettingsPage() {
     resolver: zodResolver(SettingsSchema),
     defaultValues: {
       name: user?.name || undefined,
-      email: user.email || undefined,
+      email: user?.email || undefined,
       password: undefined,
       newPassword: undefined,
-      isTwoFactorEnabled: user.isTwoFactorEnabled,
-      roles: user.roles
+      isTwoFactorEnabled: user?.isTwoFactorEnabled,
+      roles: user?.roles
     },
   })
 
@@ -97,7 +97,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="py-12">
+    <main>
       <Card className="w-1/2 mx-auto">
         <CardHeader>
           <CardTitle className="flex gap-2 items-center"><Settings className="w-5 h-5" />Settings</CardTitle>
@@ -123,7 +123,7 @@ export default function SettingsPage() {
                     </FormItem>
                   )}
                 />
-                {user.isOAuth === false && (
+                {user?.isOAuth === false && (
                   <>
                     <FormField
                       control={settingsForm.control}
@@ -201,7 +201,7 @@ export default function SettingsPage() {
                     </FormItem>
                   )}
                 />
-                {user.isOAuth === false && (
+                {user?.isOAuth === false && (
                   <FormField
                     control={settingsForm.control}
                     name="isTwoFactorEnabled"

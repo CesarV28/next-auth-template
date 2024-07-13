@@ -3,6 +3,8 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/auth";
 import { SessionNavbar } from "@/components/auth/session-navbar";
 import { Toaster as SoonnerToaster } from "@/components/ui/sonner"
+import { SideNavbar } from "@/components/side-navbar";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -17,10 +19,18 @@ export default async function ProtectedLayout({
     const session = await auth();
     return (
         <SessionProvider session={session}>
-             <SoonnerToaster/>
-            <SessionNavbar/>
-            <div >
-                {children}
+            <SoonnerToaster />
+            {/* <SessionNavbar /> */}
+            <div className={cn(
+                "min-h-screen w-full flex ",
+                {
+                    "debug-screens": process.env.NODE_ENV === "development"
+                }
+            )}>
+                <SideNavbar />
+                <div className="p-8 w-full">
+                    {children}
+                </div>
             </div>
         </SessionProvider>
     );

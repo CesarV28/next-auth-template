@@ -17,25 +17,26 @@ import { SessionUser } from '@/types';
 
 interface UserAccountNavProps {
     user: SessionUser;
+    showName?: boolean;
 }
 
-const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
+const UserAccountNav: FC<UserAccountNavProps> = ({ user, showName = false }) => {
 
     const onSignOut = async () => {
-
         await signOut().catch(console.error);
     }
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger className="flex gap-1 items-center hover:bg-muted py-1 px-2 rounded-sm">
                 <UserAvatar
-                    className="w-10 h-10"
+                    className="w-7 h-7"
                     user={{
                         name: user?.name || null,
                         image: user?.image || null,
                     }}
                 />
+                { showName && <p className="text-sm">{user?.name}</p>}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <div className="flex items-center justify-start gap-2 p-2">
@@ -50,7 +51,7 @@ const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <Link href="/">Home</Link>
+                    <Link href="/settings">Settings</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

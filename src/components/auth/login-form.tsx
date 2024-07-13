@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, Suspense, useState, useTransition } from "react"
+import { FC, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -9,10 +9,8 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import {
@@ -41,8 +39,8 @@ export const LoginForm: FC<LoginFormProps> = () => {
         ? "Email already in use, please use a different"
         : ""
 
-    const [isPending, startTransition] = useTransition();
     const [showTwoFactor, setShowTwoFactor] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -57,23 +55,17 @@ export const LoginForm: FC<LoginFormProps> = () => {
     const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        startTransition(() => {
-            login(values).then((data) => {
-                data.status === "error" &&
-                    (
-                        form.setError("email", { message: urlError ? urlError : data.message }),
-                        form.setError("password", { message: urlError ? " " : data.message })
-                    )
+        setIsLoading(true);
+        const data = await login(values);
 
-                data.status === "success" && form.reset();
-                data.status === "two-factor" && setShowTwoFactor(true);
-            }).catch(() => {
-                console.log("Catch")
-                form.setError("email", { message: "Something went wrong" }),
-                    form.setError("password", { message: "Something went wrong" })
-            })
-        })
+        if(data.status === "error") {
+            form.setError("email", { message: urlError ? urlError : data.message }),
+            form.setError("password", { message: urlError ? " " : data.message })
+        }
 
+        data.status === "success" && form.reset();
+        data.status === "two-factor" && setShowTwoFactor(true);
+        setIsLoading(false);
     }
 
     return (
@@ -99,7 +91,7 @@ export const LoginForm: FC<LoginFormProps> = () => {
                                             placeholder="123456"
                                             autoCapitalize="none"
                                             autoCorrect="off"
-                                            disabled={isPending}
+                                            disabled={isLoading}
                                         /> */}
                                         <InputOTP maxLength={6} {...field}>
                                             <InputOTPGroup>
@@ -153,7 +145,7 @@ export const LoginForm: FC<LoginFormProps> = () => {
                                             autoCapitalize="none"
                                             autoComplete="email"
                                             autoCorrect="off"
-                                            disabled={isPending}
+                                            disabled={isLoading}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -176,7 +168,7 @@ export const LoginForm: FC<LoginFormProps> = () => {
                                             type="password"
                                             autoCapitalize="none"
                                             autoCorrect="off"
-                                            disabled={isPending}
+                                            disabled={isLoading}
                                             autoComplete="current-password"
                                         />
                                     </FormControl>
@@ -203,10 +195,10 @@ export const LoginForm: FC<LoginFormProps> = () => {
                     <Button
                         type="submit"
                         className="w-full relative rounded-lg bg-background px-7 py-4 text-foreground hover:bg-background"
-                        disabled={isPending}
+                        disabled={isLoading}
                     >
 
-                        {isPending && (
+                        {isLoading && (
                             <LoaderIcon className="mr-2 animate-spin " />
                         )}
                         {showTwoFactor ? "Confirm" : "Login"}

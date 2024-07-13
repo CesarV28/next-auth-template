@@ -1,7 +1,8 @@
-import React from 'react'
 
-export default function page() {
-  return (
-    <div>page</div>
-  )
+export default function DashboardPage() {
+    return (
+        <div>
+           <h1>Dash</h1>
+        </div>
+    )
 }
