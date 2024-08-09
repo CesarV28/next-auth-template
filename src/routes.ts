@@ -2,7 +2,6 @@
 /**
  * Array of routes that are accessible to the public
  * These routes will redirect logged in users to /settings
- * @type {string[]}
  */
 export const publicRoutes = [
     "/",
@@ -12,7 +11,6 @@ export const publicRoutes = [
 /**
  * Array of routes that are for authentication
  * These routes will redirect logged users to /settings
- * @type {string[]}
  */
 export const authRoutes = [
     "/auth/login",
@@ -25,12 +23,25 @@ export const authRoutes = [
 /**
  * The prefix for API authenticated routes
  * Routes that starts with this prefix are used for API authentication purposes
- * @type {string}
  */
 export const apiAuthPrefix = "/api/auth";
 
 /**
  * The default redirect paht after logging in
- * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT = "/settings";
+
+/**
+ * The default redirect paht after logging out
+ */
+export const DEFAULT_LOGOUT_REDIRECT = "/";
+
+/**
+ * The default redirect paht after registering
+ */
+export const DEFAULT_REGISTER_REDIRECT = "/";
+
+/**
+ * The default login URL
+ */
+export const DEFAULT_LOGIN_URL = "/auth/login";

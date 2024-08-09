@@ -8,7 +8,8 @@ import {
     publicRoutes,
     authRoutes,
     apiAuthPrefix,
-    DEFAULT_LOGIN_REDIRECT
+    DEFAULT_LOGIN_REDIRECT,
+    DEFAULT_LOGIN_URL
 } from '@/routes';
 
 export default auth((req) => {
@@ -31,7 +32,7 @@ export default auth((req) => {
     }
 
     if(!isLoggeIn && !isPublicRoute ) {
-        return NextResponse.redirect(new URL("/auth/login", nextUrl))
+        return NextResponse.redirect(new URL(DEFAULT_LOGIN_URL, nextUrl))
     }
 
     return

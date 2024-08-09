@@ -215,18 +215,18 @@ export const isUserAdmin = async (): Promise<AuthResponse> => {
         if (!role || role !== UserRole.ADMIN) {
             return {
                 status: "forbidden",
-                message: "Logout successfully!"
+                message: "Access denied. You must be an admin."
             }
         }
 
         return {
             status: "success",
-            message: "You have access"
+            message: "You have admin access."
         }
     } catch (error) {
         return {
             status: "error",
-            message: "Logout successfully!"
+            message: "An error occurred while checking admin status."
         }
     }
 }

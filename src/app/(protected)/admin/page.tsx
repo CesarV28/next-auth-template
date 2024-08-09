@@ -1,10 +1,9 @@
 "use client"
-import { currentServerUserRoles } from "@/lib/auth-session";
+
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -13,9 +12,6 @@ import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
 import { isUserAdmin } from "@/actions/auth.action";
-
-
-
 
 
 export default function AdminPage() {
@@ -64,9 +60,6 @@ export default function AdminPage() {
             </div>
           </RoleGate>
         </CardContent>
-        <CardFooter>
-          <p>Card Footer</p>
-        </CardFooter>
       </Card>
 
     </div>
