@@ -90,3 +90,9 @@
   background: linear-gradient(83.21deg, #1100ff 0%, #0004ff 100%);
   mask-image: radial-gradient(rgba(0, 0, 0, .45), transparent 70%);
 }
+
+@media screen and (max-width: 768px) {
+  .parent-container::before {
+    display: none;
+  }
+}

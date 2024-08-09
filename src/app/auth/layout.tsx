@@ -14,8 +14,14 @@ export default function RootLayout({
 }>) {
   return (
     <div className="relative">
-      <Navbar/>
-        { children }
+      <Navbar />
+      <div className="w-full">
+        <div className="parent-container lg:w-1/2 mx-auto px-4">
+          <div className="lg:w-[30rem] pt-8 pb-28 lg:pt-20 mx-auto">
+            {children}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

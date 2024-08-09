@@ -98,7 +98,7 @@ export default function SettingsPage() {
 
   return (
     <main>
-      <Card className="w-1/2 mx-auto">
+      <Card className="lg:w-1/2 mx-auto">
         <CardHeader>
           <CardTitle className="flex gap-2 items-center"><Settings className="w-5 h-5" />Settings</CardTitle>
           <CardDescription>Manage your account settings here to customize your experience. Update preferences, privacy settings, and more to tailor your account to your needs.</CardDescription>
@@ -180,7 +180,7 @@ export default function SettingsPage() {
                   name="roles"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>New Password</FormLabel>
+                      <FormLabel>Select a role</FormLabel>
                       <Select
                         disabled={isLoading}
                         onValueChange={field.onChange}
