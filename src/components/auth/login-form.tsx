@@ -26,6 +26,7 @@ import { LoginSchema } from "@/schemas/login"
 import { login } from "@/actions/auth.action"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
 
 
 interface LoginFormProps {
@@ -61,6 +62,12 @@ export const LoginForm: FC<LoginFormProps> = () => {
         if(data.status === "error") {
             form.setError("email", { message: urlError ? urlError : data.message }),
             form.setError("password", { message: urlError ? " " : data.message })
+        }
+        if (data.status === "email-sent") {
+            toast.success("An email has been sent to your email address. Please check your inbox.");
+            setIsLoading(false);
+            form.reset();
+            return;
         }
 
         data.status === "success" && form.reset();

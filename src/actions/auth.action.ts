@@ -18,7 +18,7 @@ import { currentServerUserRoles } from '@/lib/auth-session';
 import { UserRole } from '@prisma/client';
 
 interface AuthResponse {
-    status: "error" | "success" | "two-factor" | "forbidden",
+    status: "error" | "success" | "two-factor" | "forbidden" | "email-sent",
     message: string;
 }
 
@@ -53,8 +53,8 @@ export const login = async (values: z.infer<typeof LoginSchema>): Promise<AuthRe
         );
 
         return {
-            status: "success",
-            message: "Confirmation email sent!"
+            status: "email-sent",
+            message: "An email has been sent to your email address. Please check your inbox."
         }
     }
 
