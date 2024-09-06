@@ -1,7 +1,7 @@
-import { APP_URL, RESEND_API_KEY } from '@/constants/envs';
+import env from '@/constants/envs';
 import { Resend } from 'resend'
 
-const resend = new Resend(RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 
 export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
@@ -23,7 +23,7 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
 
 export const sendPasswordResetTokenEmail = async (email: string, token: string) => {
     try {
-        const resetLink = `${APP_URL}/auth/new-password?token=${token}`;
+        const resetLink = `${env.APP_URL}/auth/new-password?token=${token}`;
 
         await resend.emails.send({
             from: 'Email by Auth NextJs Template <onboarding@resend.dev>',
@@ -41,7 +41,7 @@ export const sendPasswordResetTokenEmail = async (email: string, token: string) 
 
 export const sendVerificationTokenEmail = async (email: string, token: string) => {
     try {
-        const confirmLink = `${APP_URL}/auth/new-verification?token=${token}`;
+        const confirmLink = `${env.APP_URL}/auth/new-verification?token=${token}`;
 
         await resend.emails.send({
             from: 'Email by Auth NextJs Template <onboarding@resend.dev>',
