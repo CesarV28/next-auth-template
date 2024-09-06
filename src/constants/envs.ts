@@ -11,6 +11,7 @@ const EnvSchema = z.object({
     AUTH_SECRET: z.string(),
     RESEND_API_KEY: z.string(),
     APP_URL: z.string().url().default("http://localhost:3000"),
+    RESEND_EMAIL_FROM: z.string().email().default("noreply@example.com"),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
